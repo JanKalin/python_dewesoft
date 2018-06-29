@@ -42,8 +42,8 @@ sys.stdout.flush()
 filenames = sorted({item for sublist in [globglob.glob(x) for x in args.src] for item in sublist})
 if not filenames:
     raise ValueError("No files selected")
-loglen = int(math.ceil(math.log(len(filenames), 10)))
-formatstr = "{{}} {{:0{0}}}/{{:0{0}}} {{}},".format(loglen)
+loglen = int(math.ceil(math.log(len(filenames)+1, 10)))
+formatstr = "{{}} {{:{0}}}/{{:{0}}} {{}},".format(loglen)
 
 for filename in filenames:
     if os.path.splitext(filename)[1].lower() not in ['.dxd', '.d7d']:
