@@ -7,6 +7,8 @@ DEWESoft, https://dewesoft.com/, develops and manufactures versatile and easy-to
 
 However, the programs are rather rudimentary and, as a part of data processing, a higher-level interface to the DWS data files was needed. This is the result.
 
+The DLL and the Python module, on with this module is based, are distributed under license detailed in the file  https://github.com/JanKalin/python_dewesoft/blob/master/EULA-DWDataReader.pdf.
+
 ## The module
 
 The main function, `read_dws(filename, fields=None, rename=None, mixed_sample_rates=False, dll=None)` in the `DWDataReader` module, reads a DWS file and returns either a list of fields and other information about the file or data from the file in the form of a Pandas DataFrame. This is the help for the function:
