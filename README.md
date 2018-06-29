@@ -67,6 +67,8 @@ The main function, `read_dws(filename, fields=None, rename=None, mixed_sample_ra
             then periodically call `cg.collect()`.
 ```
 
+The module also includes `detect_peaks.py`, written by Marcos Duarte https://github.com/demotu/BMC and used for data analysis.
+
 ## Usage example
 
 An example of the use of the module is in the supplied script `dws2hdf5.py`, that reads DWS files and converts them to datasets in on or more HDF5 files. This is the help for the script:
