@@ -392,7 +392,7 @@ def read_dws(filename, fields=None, rename=None, mixed_sample_rates=False, dll=N
                 data.empty
             except:
                 tss = np.full((sample_cnt,), np.datetime64(sst.strftime("%Y-%m-%d %H:%M:%S.%f")), dtype='datetime64[us]')
-                dts = (np.array(p_time_stamp[:sample_cnt])*1e6).astype(int).astype('timedelta64[us]')
+                dts = (np.array(p_time_stamp[:sample_cnt])*1e6).astype('timedelta64[us]')
                 tss += dts
                 data = pd.DataFrame(columns=[field_name(x) for x in columns], index=tss, dtype=float)
             if not mixed_sample_rates and len(data) != sample_cnt:
