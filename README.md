@@ -90,9 +90,6 @@ optional arguments:
   -h, --help            show this help message and exit
   --dst DST             Destination file. If unspecified, one HDF5 file per
                         one DWS file will be produced (default: None)
-  --new                 Only processes new files, checks existence of
-                        destination file and dataset within the file (default:
-                        False)
   --list                List file info (default: False)
   --noprogress          Do not output progress (default: False)
   --fields {0,1,2}      Select fields in DWS based on names in DWS files. 0:
