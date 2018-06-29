@@ -29,7 +29,6 @@ from dewesoft import DWDataReader
 parser = argparse.ArgumentParser(description="Reads DXD/D7D (DWS) files and saves results to HDF5 file", fromfile_prefix_chars='@', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("src", help="Source file(s). Can include wildcards", nargs='+')
 parser.add_argument("--dst", help="Destination file. If unspecified, one HDF5 file per one DWS file will be produced")
-parser.add_argument("--new", help="Only processes new files, checks existence of destination file and dataset within the file", action='store_true')
 parser.add_argument("--list", help="List file info", action='store_true')
 parser.add_argument("--noprogress", help="Do not output progress", action='store_true')
 parser.add_argument("--fields", help="Select fields in DWS based on names in DWS files. 0: all fields; 1: 'ACC and not Freq' + 'T_'; 2: 'AI'", type=int, choices=[0, 1, 2])
@@ -103,18 +102,21 @@ try:
             for qty, myfields in qty_myfields:
                 dataset = "{}_{}".format(qty, datasetroot)
                 if dataset in datasets:
-                    print "{} exists,".format(dataset),
+                    if not args.noprogress:
+                        print "{} exists,".format(dataset),
                     continue
                 data = DWDataReader.read_dws(src, myfields, rename=localrename, mixed_sample_rates=args.mixedsamplerates, dll=dll)
                 if not len(data.index):
                     continue
                 data.to_hdf(filename, dataset, complevel=5, complib='zlib')
-                print "{},".format(dataset),
+                if not args.noprogress:
+                    print "{},".format(dataset),
                 del data
             gc.collect(), 
-            print "done"
+            if not args.noprogress:
+                print "done"
         except RuntimeError as e:
-            print "problems: {}".format(e.message)
+            print "{} problems: {}".format(src, e.message)
 finally:
     if dll:
         DWDataReader.close_dll(dll)
