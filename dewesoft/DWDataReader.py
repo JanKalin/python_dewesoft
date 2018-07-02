@@ -363,7 +363,7 @@ def read_dws(filename, fields=None, rename=None, mixed_sample_rates=False, dll=N
             if mydll.DWGetScaledSamples(dw_ch_index, c_int64(0), max_sample_cnt, p_data, p_time_stamp) != DWStatus.DWSTAT_OK.value:
                 raise RuntimeError("DWGetScaledSamples() failed")
             tss = np.full((max_sample_cnt,), np.datetime64(sst.strftime("%Y-%m-%d %H:%M:%S.%f")), dtype='datetime64[us]')
-            dts = (np.array(p_time_stamp[:max_sample_cnt])*1e6).astype(int).astype('timedelta64[us]')
+            dts = (np.array(p_time_stamp[:max_sample_cnt])*1e6).astype('timedelta64[us]')
             tss += dts
             data = pd.DataFrame(columns=[field_name(x) for x in columns], index=tss, dtype=float)
         else:
