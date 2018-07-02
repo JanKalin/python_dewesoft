@@ -1,4 +1,4 @@
-"""restore_net_use.py: Reads DEWESoft files as Pandas DataFrame and writes
+"""dws2hdf.py: Reads DEWESoft files as Pandas DataFrame and writes
 them to HDF5
 """
 
