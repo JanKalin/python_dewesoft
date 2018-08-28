@@ -10,7 +10,7 @@
 
 import collections
 import _ctypes
-from ctypes import Structure, c_char, c_int, c_uint, c_ulong, cdll, c_char_p, c_double, create_string_buffer, cast, byref, addressof, POINTER, c_int64
+from ctypes import Structure, c_char, c_int, c_uint, c_ulong, cdll, c_char_p, c_double, create_string_buffer, cast, byref, POINTER, c_int64
 import datetime
 from dateutil import tz
 from enum import Enum
@@ -24,9 +24,6 @@ import pandas as pd
 ###########################################################################
 # Can only run on Windows
 ###########################################################################
-
-if not platform.system() == 'Windows':
-    raise RuntimeError("This library can only run on Windows OS")
 
 ###########################################################################
 # Constants
@@ -180,9 +177,14 @@ def open_dll(libname = None):
     if not libname:
         libname = os.path.dirname(os.path.abspath(__file__)) + '/'
         if platform.architecture()[0] == '32bit':
-            libname += 'DWDataReaderLib.dll'
+            libname += 'DWDataReaderLib'
         else:
-            libname += 'DWDataReaderLib64.dll'
+            libname += 'DWDataReaderLib64'
+        if platform.system() == 'Windows':
+            libname += ".dll"
+        else:
+            libname += ".so"
+
     dll = cdll.LoadLibrary(libname)
     result = dll.DWInit()
     if result != DWStatus.DWSTAT_OK.value:
@@ -196,7 +198,10 @@ def close_dll(dll):
     result = dll.DWDeInit()
     if result != DWStatus.DWSTAT_OK.value:
         raise RuntimeError("DWDeInit() failed: {}".format(result))
-    _ctypes.FreeLibrary(dll._handle)
+    if platform.system() == 'Windows':
+        _ctypes.FreeLibrary(dll._handle)
+    else:
+        _ctypes.dlclose(dll._handle)
 
 
 def read_dws(filename, fields=None, rename=None, mixed_sample_rates=False, dll=None):
@@ -275,7 +280,7 @@ def read_dws(filename, fields=None, rename=None, mixed_sample_rates=False, dll=N
         # open data file
         file_name = c_char_p(filename.encode())
         file_info = DWFileInfo(0, 0, 0)
-        if mydll.DWOpenDataFile(file_name, addressof(file_info)) != DWStatus.DWSTAT_OK.value:
+        if mydll.DWOpenDataFile(file_name, byref(file_info)) != DWStatus.DWSTAT_OK.value:
             raise RuntimeError("DWOpenDataFile() failed")
         fileopened = True
         
