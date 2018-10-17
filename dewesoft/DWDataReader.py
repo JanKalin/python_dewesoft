@@ -15,11 +15,17 @@ import datetime
 from dateutil import tz
 from enum import Enum
 import platform
+import re
 import os
+import subprocess
 import sys
 
 import numpy as np
 import pandas as pd
+
+###########################################################################
+# Can only run on Windows
+###########################################################################
 
 ###########################################################################
 # Constants
@@ -164,6 +170,15 @@ def DWRaiseError(err_str):
 # Reader stuff
 ###########################################################################
 
+def glibc_version():
+    lines = subprocess.check_output(["ldd", "--version"]).split("\n")
+    for line in lines:
+        match = re.search("(\d+\.\d+)$", line)
+        if match:
+            return float(match.group(1))
+    raise RuntimeError("Cannot determine GLIBC version with 'ldd --version'")
+    
+
 def open_dll(libname = None):
     """Opens dewesoft dll.
     
@@ -179,6 +194,8 @@ def open_dll(libname = None):
         if platform.system() == 'Windows':
             libname += ".dll"
         else:
+            if glibc_version() < 2.14:
+                libname += "-4.2.0.4"
             libname += ".so"
 
     dll = cdll.LoadLibrary(libname)
@@ -305,7 +322,10 @@ def read_dws(filename, fields=None, rename=None, mixed_sample_rates=False, dll=N
                 raise RuntimeError("Cannot read data with array_size > 1")
             dw_ch_index = c_int(ch_list[idx].index)
             sample_cnt = c_int()
-            sample_cnt = mydll.DWGetScaledSamplesCount(dw_ch_index)
+            try:
+                sample_cnt = mydll.DWGetScaledSamplesCount(dw_ch_index)
+            except:
+                raise RuntimeError("DWGetScaledSamplesCount() failed with an Access Violation")
             if sample_cnt < 0:
                 raise RuntimeError("DWGetScaledSamplesCount() failed")
             else:
