@@ -374,7 +374,7 @@ def read_dws(filename, fields=None, rename=None, scale=None, mixed_sample_rates=
 
         
         # Calculate sample ratio
-        max_sample_cnt = max(sample_cnts)
+        max_sample_cnt = np.lcm.reduce(sample_cnts)
         srdiv = [max_sample_cnt/x if x and not max_sample_cnt % x else np.nan for x in sample_cnts]
 
         # Perhaps rename
